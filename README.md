@@ -1,1 +1,1 @@
-# ParagonApi .NET Samples Apps
+# ParagonApi .NET Sample Apps
