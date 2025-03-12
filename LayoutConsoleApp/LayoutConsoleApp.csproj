@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="ParagonApi" Version="9.1.0" />
+    <PackageReference Include="ParagonApi" Version="11.0.0" />
   </ItemGroup>
 
 </Project>

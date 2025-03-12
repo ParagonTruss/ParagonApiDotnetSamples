@@ -43,9 +43,8 @@ public class Program
         foreach (var trussGuid in trussGuids)
         {
             var truss = await connection.Trusses.Find(trussGuid);
-            var analysisSetGuid = await connection.Trusses.UpgradeAndAnalyze(trussGuid);
+            var analysisSet = await connection.Trusses.UpgradeAndAnalyze(trussGuid);
 
-            var analysisSet = await connection.AnalysisSets.Get(analysisSetGuid);
             Console.WriteLine($"Truss {truss.Name} Capacity Ratio: {analysisSet.CapacityRatio}");
         }
 
