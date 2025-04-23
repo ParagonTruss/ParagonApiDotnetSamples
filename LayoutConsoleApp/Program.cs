@@ -3,7 +3,7 @@ using ParagonApi.Models;
 
 namespace LayoutConsoleApp;
 
-public class Program
+public static class Program
 {
     private static double Feet => 12;
 
@@ -53,7 +53,10 @@ public class Program
         Console.WriteLine();
     }
 
-    private static async Task CreateBearingEnvelopesAndRoofPlanes(Paragon connection, Guid projectGuid)
+    private static async Task CreateBearingEnvelopesAndRoofPlanes(
+        Paragon connection,
+        Guid projectGuid
+    )
     {
         var southWestPoint = new Point2D { X = 0, Y = 0 };
         var southEastPoint = new Point2D { X = BuildingLength, Y = 0 };
@@ -62,19 +65,35 @@ public class Program
 
         var southBearingEnvelope = await connection.Layouts.CreateBearingEnvelope(
             projectGuid,
-            CreateNewBearingEnvelope(name: "South", leftPoint: southWestPoint, rightPoint: southEastPoint)
+            CreateNewBearingEnvelope(
+                name: "South",
+                leftPoint: southWestPoint,
+                rightPoint: southEastPoint
+            )
         );
         var eastBearingEnvelope = await connection.Layouts.CreateBearingEnvelope(
             projectGuid,
-            CreateNewBearingEnvelope(name: "East", leftPoint: southEastPoint, rightPoint: northEastPoint)
+            CreateNewBearingEnvelope(
+                name: "East",
+                leftPoint: southEastPoint,
+                rightPoint: northEastPoint
+            )
         );
         var northBearingEnvelope = await connection.Layouts.CreateBearingEnvelope(
             projectGuid,
-            CreateNewBearingEnvelope(name: "North", leftPoint: northEastPoint, rightPoint: northWestPoint)
+            CreateNewBearingEnvelope(
+                name: "North",
+                leftPoint: northEastPoint,
+                rightPoint: northWestPoint
+            )
         );
         var westBearingEnvelope = await connection.Layouts.CreateBearingEnvelope(
             projectGuid,
-            CreateNewBearingEnvelope(name: "West", leftPoint: northWestPoint, rightPoint: southWestPoint)
+            CreateNewBearingEnvelope(
+                name: "West",
+                leftPoint: northWestPoint,
+                rightPoint: southWestPoint
+            )
         );
 
         var southRoofPlane = await connection.Layouts.CreateRoofPlane(
@@ -94,20 +113,27 @@ public class Program
             CreateNewRoofPlane(westBearingEnvelope.Guid)
         );
 
-        southRoofPlane.Cuts.AddRange(CreatePlaneCuts([westRoofPlane, northRoofPlane, eastRoofPlane]));
+        southRoofPlane.Cuts.AddRange(
+            CreatePlaneCuts([westRoofPlane, northRoofPlane, eastRoofPlane])
+        );
         await connection.Layouts.UpdateRoofPlane(projectGuid, southRoofPlane);
 
         westRoofPlane.Cuts.AddRange(CreatePlaneCuts([northRoofPlane, southRoofPlane]));
         await connection.Layouts.UpdateRoofPlane(projectGuid, westRoofPlane);
 
-        northRoofPlane.Cuts.AddRange(CreatePlaneCuts([eastRoofPlane, southRoofPlane, westRoofPlane]));
+        northRoofPlane.Cuts.AddRange(
+            CreatePlaneCuts([eastRoofPlane, southRoofPlane, westRoofPlane])
+        );
         await connection.Layouts.UpdateRoofPlane(projectGuid, northRoofPlane);
 
         eastRoofPlane.Cuts.AddRange(CreatePlaneCuts([southRoofPlane, northRoofPlane]));
         await connection.Layouts.UpdateRoofPlane(projectGuid, eastRoofPlane);
     }
 
-    private static async Task<List<TrussEnvelope>> CreateTrussEnvelopes(Paragon connection, Guid projectGuid)
+    private static async Task<List<TrussEnvelope>> CreateTrussEnvelopes(
+        Paragon connection,
+        Guid projectGuid
+    )
     {
         var trussEnvelopes = new List<TrussEnvelope>();
         var trussEnvelopeNumber = 1;
@@ -129,7 +155,11 @@ public class Program
             CreateNewTrussEnvelope(
                 name: $"{trussEnvelopeNumber++}",
                 leftPoint: new Point2D { X = BuildingLength - girderOffset, Y = -OverhangDistance },
-                rightPoint: new Point2D { X = BuildingLength - girderOffset, Y = Span + OverhangDistance },
+                rightPoint: new Point2D
+                {
+                    X = BuildingLength - girderOffset,
+                    Y = Span + OverhangDistance,
+                },
                 Justification.Front
             )
         );
@@ -208,8 +238,16 @@ public class Program
             projectGuid,
             CreateNewTrussEnvelope(
                 name: $"{trussEnvelopeNumber++}",
-                leftPoint: new Point2D { X = BuildingLength - girderOffset, Y = Span - girderOffset },
-                rightPoint: new Point2D { X = BuildingLength + OverhangDistance, Y = Span - girderOffset },
+                leftPoint: new Point2D
+                {
+                    X = BuildingLength - girderOffset,
+                    Y = Span - girderOffset,
+                },
+                rightPoint: new Point2D
+                {
+                    X = BuildingLength + OverhangDistance,
+                    Y = Span - girderOffset,
+                },
                 Justification.Back
             )
         );
@@ -226,7 +264,11 @@ public class Program
                 CreateNewTrussEnvelope(
                     name: $"{trussEnvelopeNumber++}",
                     leftPoint: new Point2D { X = BuildingLength - girderOffset, Y = trussOffset },
-                    rightPoint: new Point2D { X = BuildingLength + OverhangDistance, Y = trussOffset },
+                    rightPoint: new Point2D
+                    {
+                        X = BuildingLength + OverhangDistance,
+                        Y = trussOffset,
+                    },
                     Justification.Back
                 )
             );
@@ -289,7 +331,11 @@ public class Program
                     X = BuildingLength + OverhangDistance - kingJackOffset,
                     Y = Span + OverhangDistance - kingJackOffset,
                 },
-                rightPoint: new Point2D { X = BuildingLength - girderOffset, Y = Span - girderOffset },
+                rightPoint: new Point2D
+                {
+                    X = BuildingLength - girderOffset,
+                    Y = Span - girderOffset,
+                },
                 Justification.Center
             )
         );
@@ -302,7 +348,11 @@ public class Program
             CreateNewTrussEnvelope(
                 name: $"{trussEnvelopeNumber++}",
                 leftPoint: new Point2D { X = -OverhangDistance, Y = girderOffset - 2 * Feet },
-                rightPoint: new Point2D { X = girderOffset - 2 * Feet - cornerJackOffset, Y = girderOffset - 2 * Feet },
+                rightPoint: new Point2D
+                {
+                    X = girderOffset - 2 * Feet - cornerJackOffset,
+                    Y = girderOffset - 2 * Feet,
+                },
                 Justification.Front,
                 rightBevelCut: new BevelCut { Type = BevelCutType.Double, Angle = 45 }
             )
@@ -314,7 +364,11 @@ public class Program
             CreateNewTrussEnvelope(
                 name: $"{trussEnvelopeNumber++}",
                 leftPoint: new Point2D { X = -OverhangDistance, Y = girderOffset - 4 * Feet },
-                rightPoint: new Point2D { X = girderOffset - 4 * Feet - cornerJackOffset, Y = girderOffset - 4 * Feet },
+                rightPoint: new Point2D
+                {
+                    X = girderOffset - 4 * Feet - cornerJackOffset,
+                    Y = girderOffset - 4 * Feet,
+                },
                 Justification.Front,
                 rightBevelCut: new BevelCut { Type = BevelCutType.Double, Angle = 45 }
             )
@@ -326,7 +380,11 @@ public class Program
             CreateNewTrussEnvelope(
                 name: $"{trussEnvelopeNumber++}",
                 leftPoint: new Point2D { X = girderOffset - 2 * Feet, Y = -OverhangDistance },
-                rightPoint: new Point2D { X = girderOffset - 2 * Feet, Y = girderOffset - 2 * Feet - cornerJackOffset },
+                rightPoint: new Point2D
+                {
+                    X = girderOffset - 2 * Feet,
+                    Y = girderOffset - 2 * Feet - cornerJackOffset,
+                },
                 Justification.Back,
                 rightBevelCut: new BevelCut { Type = BevelCutType.Double, Angle = 45 }
             )
@@ -338,7 +396,11 @@ public class Program
             CreateNewTrussEnvelope(
                 name: $"{trussEnvelopeNumber++}",
                 leftPoint: new Point2D { X = girderOffset - 4 * Feet, Y = -OverhangDistance },
-                rightPoint: new Point2D { X = girderOffset - 4 * Feet, Y = girderOffset - 4 * Feet - cornerJackOffset },
+                rightPoint: new Point2D
+                {
+                    X = girderOffset - 4 * Feet,
+                    Y = girderOffset - 4 * Feet - cornerJackOffset,
+                },
                 Justification.Back,
                 rightBevelCut: new BevelCut { Type = BevelCutType.Double, Angle = 45 }
             )
@@ -349,7 +411,11 @@ public class Program
             projectGuid,
             CreateNewTrussEnvelope(
                 name: $"{trussEnvelopeNumber++}",
-                leftPoint: new Point2D { X = -OverhangDistance, Y = Span - girderOffset + 2 * Feet },
+                leftPoint: new Point2D
+                {
+                    X = -OverhangDistance,
+                    Y = Span - girderOffset + 2 * Feet,
+                },
                 rightPoint: new Point2D
                 {
                     X = girderOffset - 2 * Feet - cornerJackOffset,
@@ -365,7 +431,11 @@ public class Program
             projectGuid,
             CreateNewTrussEnvelope(
                 name: $"{trussEnvelopeNumber++}",
-                leftPoint: new Point2D { X = -OverhangDistance, Y = Span - girderOffset + 4 * Feet },
+                leftPoint: new Point2D
+                {
+                    X = -OverhangDistance,
+                    Y = Span - girderOffset + 4 * Feet,
+                },
                 rightPoint: new Point2D
                 {
                     X = girderOffset - 4 * Feet - cornerJackOffset,
@@ -413,7 +483,11 @@ public class Program
             projectGuid,
             CreateNewTrussEnvelope(
                 name: $"{trussEnvelopeNumber++}",
-                leftPoint: new Point2D { X = BuildingLength + OverhangDistance, Y = girderOffset - 2 * Feet },
+                leftPoint: new Point2D
+                {
+                    X = BuildingLength + OverhangDistance,
+                    Y = girderOffset - 2 * Feet,
+                },
                 rightPoint: new Point2D
                 {
                     X = BuildingLength - girderOffset + 2 * Feet + cornerJackOffset,
@@ -429,7 +503,11 @@ public class Program
             projectGuid,
             CreateNewTrussEnvelope(
                 name: $"{trussEnvelopeNumber++}",
-                leftPoint: new Point2D { X = BuildingLength + OverhangDistance, Y = girderOffset - 4 * Feet },
+                leftPoint: new Point2D
+                {
+                    X = BuildingLength + OverhangDistance,
+                    Y = girderOffset - 4 * Feet,
+                },
                 rightPoint: new Point2D
                 {
                     X = BuildingLength - girderOffset + 4 * Feet + cornerJackOffset,
@@ -445,7 +523,11 @@ public class Program
             projectGuid,
             CreateNewTrussEnvelope(
                 name: $"{trussEnvelopeNumber++}",
-                leftPoint: new Point2D { X = BuildingLength - girderOffset + 2 * Feet, Y = -OverhangDistance },
+                leftPoint: new Point2D
+                {
+                    X = BuildingLength - girderOffset + 2 * Feet,
+                    Y = -OverhangDistance,
+                },
                 rightPoint: new Point2D
                 {
                     X = BuildingLength - girderOffset + 2 * Feet,
@@ -461,7 +543,11 @@ public class Program
             projectGuid,
             CreateNewTrussEnvelope(
                 name: $"{trussEnvelopeNumber++}",
-                leftPoint: new Point2D { X = BuildingLength - girderOffset + 4 * Feet, Y = -OverhangDistance },
+                leftPoint: new Point2D
+                {
+                    X = BuildingLength - girderOffset + 4 * Feet,
+                    Y = -OverhangDistance,
+                },
                 rightPoint: new Point2D
                 {
                     X = BuildingLength - girderOffset + 4 * Feet,
@@ -477,7 +563,11 @@ public class Program
             projectGuid,
             CreateNewTrussEnvelope(
                 name: $"{trussEnvelopeNumber++}",
-                leftPoint: new Point2D { X = BuildingLength + OverhangDistance, Y = Span - girderOffset + 2 * Feet },
+                leftPoint: new Point2D
+                {
+                    X = BuildingLength + OverhangDistance,
+                    Y = Span - girderOffset + 2 * Feet,
+                },
                 rightPoint: new Point2D
                 {
                     X = BuildingLength - girderOffset + 2 * Feet + cornerJackOffset,
@@ -493,7 +583,11 @@ public class Program
             projectGuid,
             CreateNewTrussEnvelope(
                 name: $"{trussEnvelopeNumber++}",
-                leftPoint: new Point2D { X = BuildingLength + OverhangDistance, Y = Span - girderOffset + 4 * Feet },
+                leftPoint: new Point2D
+                {
+                    X = BuildingLength + OverhangDistance,
+                    Y = Span - girderOffset + 4 * Feet,
+                },
                 rightPoint: new Point2D
                 {
                     X = BuildingLength - girderOffset + 4 * Feet + cornerJackOffset,
@@ -509,7 +603,11 @@ public class Program
             projectGuid,
             CreateNewTrussEnvelope(
                 name: $"{trussEnvelopeNumber++}",
-                leftPoint: new Point2D { X = BuildingLength - girderOffset + 2 * Feet, Y = Span + OverhangDistance },
+                leftPoint: new Point2D
+                {
+                    X = BuildingLength - girderOffset + 2 * Feet,
+                    Y = Span + OverhangDistance,
+                },
                 rightPoint: new Point2D
                 {
                     X = BuildingLength - girderOffset + 2 * Feet,
@@ -525,7 +623,11 @@ public class Program
             projectGuid,
             CreateNewTrussEnvelope(
                 name: $"{trussEnvelopeNumber++}",
-                leftPoint: new Point2D { X = BuildingLength - girderOffset + 4 * Feet, Y = Span + OverhangDistance },
+                leftPoint: new Point2D
+                {
+                    X = BuildingLength - girderOffset + 4 * Feet,
+                    Y = Span + OverhangDistance,
+                },
                 rightPoint: new Point2D
                 {
                     X = BuildingLength - girderOffset + 4 * Feet,
@@ -540,7 +642,11 @@ public class Program
         return trussEnvelopes;
     }
 
-    private static NewBearingEnvelope CreateNewBearingEnvelope(string name, Point2D leftPoint, Point2D rightPoint) =>
+    private static NewBearingEnvelope CreateNewBearingEnvelope(
+        string name,
+        Point2D leftPoint,
+        Point2D rightPoint
+    ) =>
         new NewBearingEnvelope
         {
             Name = name,
