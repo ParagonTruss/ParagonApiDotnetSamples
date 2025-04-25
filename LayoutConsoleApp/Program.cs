@@ -17,7 +17,7 @@ public static class Program
         using var connection = await Paragon.Connect();
 
         Console.WriteLine("Creating a new project...");
-        var project = await connection.Projects.Create(new Project { Name = "Test Project" });
+        var project = await connection.Projects.Create(new NewProject { Name = "Test Project" });
 
         Console.WriteLine("Creating bearing envelopes and roof planes...");
         await CreateBearingEnvelopesAndRoofPlanes(connection, project.Guid);
