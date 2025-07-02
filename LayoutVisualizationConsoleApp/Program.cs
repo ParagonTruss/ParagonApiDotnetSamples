@@ -54,15 +54,6 @@ public static class Program
             if (!trussEnvelope.ComponentDesignGuid.HasValue)
                 continue;
 
-            if (trussEnvelope.BackLeftPoint == null)
-            {
-                Console.WriteLine(
-                    $"Truss envelope {trussEnvelope.Name} has no position. Skipping."
-                );
-                Console.WriteLine();
-                continue;
-            }
-
             var componentDesignGuid = trussEnvelope.ComponentDesignGuid.Value;
 
             Console.WriteLine($"Fetching {componentDesignGuid}...");
@@ -77,7 +68,7 @@ public static class Program
                     member,
                     trussEnvelope.LeftPoint,
                     trussEnvelope.RightPoint,
-                    trussEnvelope.BackLeftPoint
+                    trussEnvelope.Elevation
                 );
 
                 var memberCoordinates = string.Join(
@@ -97,7 +88,7 @@ public static class Program
         Member member,
         Point2D leftPoint,
         Point2D rightPoint,
-        Point3D backLeftPoint
+        double elevation
     )
     {
         var extrudedMemberGeometry = ExtrudeInPositiveZDirection(member.Geometry, member.Thickness);
@@ -108,7 +99,12 @@ public static class Program
         var rotation = Math.Atan2(rightPoint.Y - leftPoint.Y, rightPoint.X - leftPoint.X);
         var rotationMatrix = RotationMatrix.AroundZAxis(rotation);
 
-        var translation = backLeftPoint;
+        var translation = new Point3D
+        {
+            X = leftPoint.X,
+            Y = leftPoint.Y,
+            Z = elevation,
+        };
 
         return extrudedMemberGeometryInLayoutCoordinates
             .Select(vertex =>

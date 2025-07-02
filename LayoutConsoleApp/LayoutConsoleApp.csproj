@@ -6,6 +6,6 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="ParagonApi" Version="11.2.0" />
+    <PackageReference Include="ParagonApi" Version="12.1.0" />
   </ItemGroup>
 </Project>
